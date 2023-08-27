@@ -118,62 +118,53 @@ public class Operacion {
     }
 
     public static int getValue(char digit, int base) {
-        String digits = "0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz"
-        		+"アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワ"
-        		+"ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ!";
+        String digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"+
+        				"アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワガ"+
+        				"ギグゲゴザジズゼゾダヂヅデドバビブベボパピプペㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ!¡#%&*∙\\'′″„"+
+        				"¨`´,./:;?¿@~-−_¯¦|‹›«∀∂∃∇∈∉$¸»ªâÂäÄÃãåÅæÆÇçÐðèÈéÉêÊëËƒìÌíÍîÎïÏⁿ"+
+        				"òÒóÓôÔöÖÕõØøŒœßÞþùÙúÚûÛüÜÿ™()[]{}+-×÷^=≠<>±≈≤≥₀¹²³⁴⁵⁶⁷⁸⁹‰¼½¾∞═│║┌╒╓╗"+
+        				"┐╕╖╗└╘╙╚┘╛╜╝├╞╟╠┤╡╢╣┬╤╥╦┴╧╨╩┼╪╫╬§©¬®°µ¶·♠♣♥♦†‡•αβΓγΔεζηΘθικΛλμνξΞ"+
+        				"πΠρΣσΣσςτυΦφχψΩωℵ⌂⌐⌠⌡◊↑→⇒↓←↔⇔─∏∑√∝∧∨∩∪∫∫∴≡⊂⊃⊆⊇БВГДЕЁЖЗИЙКЛМНОПР"+
+        				"СТУФХЦЧШЩЪЫЬЭЮЯбвгдежзийклмнопрстуфхцчшщъыьэюяё¹²³⁴⁵⁶⁷⁸⁹¼½¾∏ÅÆĄĆĘŁ"+
+        				"ŃÓŚŹŻąćęłńóśźż€₹";
         return digits.indexOf(digit);
     }
 
     public static char getDigit(int value, int base) {
-        String digits = "0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz"
-        		+"アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワ"
-        		+"ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ!";
-        
+        String digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"+
+				"アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワガ"+
+				"ギグゲゴザジズゼゾダヂヅデドバビブベボパピプペㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ!¡#%&*∙\\'′″„"+
+				"¨`´,./:;?¿@~-−_¯¦|‹›«∀∂∃∇∈∉$¸»ªâÂäÄÃãåÅæÆÇçÐðèÈéÉêÊëËƒìÌíÍîÎïÏⁿ"+
+				"òÒóÓôÔöÖÕõØøŒœßÞþùÙúÚûÛüÜÿ™()[]{}+-×÷^=≠<>±≈≤≥₀¹²³⁴⁵⁶⁷⁸⁹‰¼½¾∞═│║┌╒╓╗"+
+				"┐╕╖╗└╘╙╚┘╛╜╝├╞╟╠┤╡╢╣┬╤╥╦┴╧╨╩┼╪╫╬§©¬®°µ¶·♠♣♥♦†‡•αβΓγΔεζηΘθικΛλμνξΞ"+
+				"πΠρΣσΣσςτυΦφχψΩωℵ⌂⌐⌠⌡◊↑→⇒↓←↔⇔─∏∑√∝∧∨∩∪∫∫∴≡⊂⊃⊆⊇БВГДЕЁЖЗИЙКЛМНОПР"+
+				"СТУФХЦЧШЩЪЫЬЭЮЯбвгдежзийклмнопрстуфхцчшщъыьэюяё¹²³⁴⁵⁶⁷⁸⁹¼½¾∏ÅÆĄĆĘŁ"+
+				"ŃÓŚŹŻąćęłńóśźż€₹";
         return digits.charAt(value);
     }
 
     public static boolean compareResults(String result, List<String> numbers, List<Character> operations, int base) {
-        String resultInBase10 = convertToBase10(result, base);
-        String expectedResultInBase10 = calculateExpectedResult(numbers, operations, base);
+        String computedResult = performOperationsInBase(numbers, operations, base);
 
-        System.out.println("Resultado en base 10: " + resultInBase10);
-        System.out.println("Resultado esperado en base 10: " + expectedResultInBase10);
+        BigInteger base10Computed = customBaseToBase10(computedResult, base);
+        BigInteger base10Result = customBaseToBase10(result, base);
 
-        return resultInBase10.equals(expectedResultInBase10);
+        System.out.println("Resultado en base 10 calculado: " + base10Computed);
+        System.out.println("Resultado en base 10 esperado: " + base10Result);
+
+        return base10Computed.equals(base10Result);
     }
 
-    public static String calculateExpectedResult(List<String> numbers, List<Character> operations, int base) {
-        BigInteger base10Result = new BigInteger(convertToBase10(numbers.get(0), base));
+    public static BigInteger customBaseToBase10(String baseValue, int base) {
+        BigInteger base10Value = BigInteger.ZERO;
 
-        for (int i = 0; i < operations.size(); i++) {
-            char operation = operations.get(i);
-            BigInteger nextNumberInBase = new BigInteger(convertToBase10(numbers.get(i + 1), base));
-
-            if (operation == '+') {
-                base10Result = base10Result.add(nextNumberInBase);
-            } else if (operation == '-') {
-                base10Result = base10Result.subtract(nextNumberInBase);
-            } else if (operation == '*') {
-                base10Result = base10Result.multiply(nextNumberInBase);
-            } else if (operation == '/') {
-                base10Result = base10Result.divide(nextNumberInBase);
-            }
-        }
-        return base10Result.toString();
-    }
-
-    public static String convertToBase10(String number, int base) {
-        BigInteger base10Number = BigInteger.ZERO;
-        BigInteger multiplier = BigInteger.ONE;
-
-        for (int i = number.length() - 1; i >= 0; i--) {
-            char digit = number.charAt(i);
+        for (int i = 0; i < baseValue.length(); i++) {
+            char digit = baseValue.charAt(i);
             int digitValue = getValue(digit, base);
-            base10Number = base10Number.add(multiplier.multiply(BigInteger.valueOf(digitValue)));
-            multiplier = multiplier.multiply(BigInteger.valueOf(base));
+            base10Value = base10Value.multiply(BigInteger.valueOf(base)).add(BigInteger.valueOf(digitValue));
         }
 
-        return base10Number.toString();
+        return base10Value;
     }
 }
 
