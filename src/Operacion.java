@@ -79,11 +79,44 @@ public class Operacion {
     }
 
     public static String subtractInBase(String num1, String num2, int base) {
-        return performOperation(num1, num2, base, '-');
+        int compareResult = customBaseToBase10(num1, base).compareTo(customBaseToBase10(num2, base));
+        
+        String largerNum = num1;
+        String smallerNum = num2;
+
+        if (compareResult < 0) {
+            largerNum = num2;
+            smallerNum = num1;
+        }
+
+        StringBuilder result = new StringBuilder();
+        int borrow = 0;
+
+        for (int i = 0; i < largerNum.length() || borrow != 0; i++) {
+            int digit1 = i < largerNum.length() ? getValue(largerNum.charAt(largerNum.length() - 1 - i), base) : 0;
+            int digit2 = i < smallerNum.length() ? getValue(smallerNum.charAt(smallerNum.length() - 1 - i), base) : 0;
+
+            int tempResult = digit1 - digit2 - borrow;
+
+            if (tempResult < 0) {
+                tempResult += base;
+                borrow = 1;
+            } else {
+                borrow = 0;
+            }
+
+            result.insert(0, getDigit(tempResult, base));
+        }
+
+        return result.toString();
     }
 
     public static String multiplyInBase(String num1, String num2, int base) {
-        return performOperation(num1, num2, base, '*');
+        BigInteger base10Num1 = customBaseToBase10(num1, base);
+        BigInteger base10Num2 = customBaseToBase10(num2, base);
+        BigInteger productBase10 = base10Num1.multiply(base10Num2);
+
+        return customBaseFromBase10(productBase10, base);
     }
 
     public static String divideInBase(String num1, String num2, int base) {
@@ -118,28 +151,28 @@ public class Operacion {
     }
 
     public static int getValue(char digit, int base) {
-        String digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"+
-        				"アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワガ"+
-        				"ギグゲゴザジズゼゾダヂヅデドバビブベボパピプペㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ!¡#%&*∙\\'′″„"+
-        				"¨`´,./:;?¿@~-−_¯¦|‹›«∀∂∃∇∈∉$¸»ªâÂäÄÃãåÅæÆÇçÐðèÈéÉêÊëËƒìÌíÍîÎïÏⁿ"+
-        				"òÒóÓôÔöÖÕõØøŒœßÞþùÙúÚûÛüÜÿ™()[]{}+-×÷^=≠<>±≈≤≥₀¹²³⁴⁵⁶⁷⁸⁹‰¼½¾∞═│║┌╒╓╗"+
-        				"┐╕╖╗└╘╙╚┘╛╜╝├╞╟╠┤╡╢╣┬╤╥╦┴╧╨╩┼╪╫╬§©¬®°µ¶·♠♣♥♦†‡•αβΓγΔεζηΘθικΛλμνξΞ"+
-        				"πΠρΣσΣσςτυΦφχψΩωℵ⌂⌐⌠⌡◊↑→⇒↓←↔⇔─∏∑√∝∧∨∩∪∫∫∴≡⊂⊃⊆⊇БВГДЕЁЖЗИЙКЛМНОПР"+
-        				"СТУФХЦЧШЩЪЫЬЭЮЯбвгдежзийклмнопрстуфхцчшщъыьэюяё¹²³⁴⁵⁶⁷⁸⁹¼½¾∏ÅÆĄĆĘŁ"+
-        				"ŃÓŚŹŻąćęłńóśźż€₹";
+        String digits = "0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz" +
+            "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワガ" +
+            "ギグゲゴザジズゼゾダヂヅデドバビブベボパピプペㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ!¡#%&*∙\\'′″„" +
+            "¨`´,./:;?¿@~-−_¯¦|‹›«∀∂∃∇∈∉$¸»ªâÂäÄÃãåÅæÆÇçÐðèÈéÉêÊëËƒìÌíÍîÎïÏⁿ" +
+            "òÒóÓôÔöÖÕõØøŒœßÞþùÙúÚûÛüÜÿ™()[]{}+-×÷^=≠<>±≈≤≥₀¹²³⁴⁵⁶⁷⁸⁹‰¼½¾∞═│║┌╒╓╗" +
+            "┐╕╖╗└╘╙╚┘╛╜╝├╞╟╠┤╡╢╣┬╤╥╦┴╧╨╩┼╪╫╬§©¬®°µ¶·♠♣♥♦†‡•αβΓγΔεζηΘθικΛλμνξΞ" +
+            "πΠρΣσΣσςτυΦφχψΩωℵ⌂⌐⌠⌡◊↑→⇒↓←↔⇔─∏∑√∝∧∨∩∪∫∫∴≡⊂⊃⊆⊇БВГДЕЁЖЗИЙКЛМНОПР" +
+            "СТУФХЦЧШЩЪЫЬЭЮЯбвгдежзийклмнопрстуфхцчшщъыьэюяё¹²³⁴⁵⁶⁷⁸⁹¼½¾∏ÅÆĄĆĘŁ" +
+            "ŃÓŚŹŻąćęłńóśźż€₹";
         return digits.indexOf(digit);
     }
 
     public static char getDigit(int value, int base) {
-        String digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"+
-				"アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワガ"+
-				"ギグゲゴザジズゼゾダヂヅデドバビブベボパピプペㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ!¡#%&*∙\\'′″„"+
-				"¨`´,./:;?¿@~-−_¯¦|‹›«∀∂∃∇∈∉$¸»ªâÂäÄÃãåÅæÆÇçÐðèÈéÉêÊëËƒìÌíÍîÎïÏⁿ"+
-				"òÒóÓôÔöÖÕõØøŒœßÞþùÙúÚûÛüÜÿ™()[]{}+-×÷^=≠<>±≈≤≥₀¹²³⁴⁵⁶⁷⁸⁹‰¼½¾∞═│║┌╒╓╗"+
-				"┐╕╖╗└╘╙╚┘╛╜╝├╞╟╠┤╡╢╣┬╤╥╦┴╧╨╩┼╪╫╬§©¬®°µ¶·♠♣♥♦†‡•αβΓγΔεζηΘθικΛλμνξΞ"+
-				"πΠρΣσΣσςτυΦφχψΩωℵ⌂⌐⌠⌡◊↑→⇒↓←↔⇔─∏∑√∝∧∨∩∪∫∫∴≡⊂⊃⊆⊇БВГДЕЁЖЗИЙКЛМНОПР"+
-				"СТУФХЦЧШЩЪЫЬЭЮЯбвгдежзийклмнопрстуфхцчшщъыьэюяё¹²³⁴⁵⁶⁷⁸⁹¼½¾∏ÅÆĄĆĘŁ"+
-				"ŃÓŚŹŻąćęłńóśźż€₹";
+        String digits = "0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz" +
+            "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワガ" +
+            "ギグゲゴザジズゼゾダヂヅデドバビブベボパピプペㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ!¡#%&*∙\\'′″„" +
+            "¨`´,./:;?¿@~-−_¯¦|‹›«∀∂∃∇∈∉$¸»ªâÂäÄÃãåÅæÆÇçÐðèÈéÉêÊëËƒìÌíÍîÎïÏⁿ" +
+            "òÒóÓôÔöÖÕõØøŒœßÞþùÙúÚûÛüÜÿ™()[]{}+-×÷^=≠<>±≈≤≥₀¹²³⁴⁵⁶⁷⁸⁹‰¼½¾∞═│║┌╒╓╗" +
+            "┐╕╖╗└╘╙╚┘╛╜╝├╞╟╠┤╡╢╣┬╤╥╦┴╧╨╩┼╪╫╬§©¬®°µ¶·♠♣♥♦†‡•αβΓγΔεζηΘθικΛλμνξΞ" +
+            "πΠρΣσΣσςτυΦφχψΩωℵ⌂⌐⌠⌡◊↑→⇒↓←↔⇔─∏∑√∝∧∨∩∪∫∫∴≡⊂⊃⊆⊇БВГДЕЁЖЗИЙКЛМНОПР" +
+            "СТУФХЦЧШЩЪЫЬЭЮЯбвгдежзийклмнопрстуфхцчшщъыьэюяё¹²³⁴⁵⁶⁷⁸⁹¼½¾∏ÅÆĄĆĘŁ" +
+            "ŃÓŚŹŻąćęłńóśźż€₹";
         return digits.charAt(value);
     }
 
@@ -166,6 +199,21 @@ public class Operacion {
 
         return base10Value;
     }
+
+    public static String customBaseFromBase10(BigInteger base10Value, int base) {
+        StringBuilder result = new StringBuilder();
+
+        while (base10Value.compareTo(BigInteger.ZERO) > 0) {
+            BigInteger[] divRem = base10Value.divideAndRemainder(BigInteger.valueOf(base));
+            int remainder = divRem[1].intValue();
+            char digit = getDigit(remainder, base);
+            result.insert(0, digit);
+            base10Value = divRem[0];
+        }
+
+        return result.toString();
+    }
 }
+
 
 
